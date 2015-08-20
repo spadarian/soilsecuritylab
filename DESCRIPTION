@@ -1,0 +1,16 @@
+Package: soilsecuritylab
+Type: Package
+Title: Soil Security Laboratory from the University of Sydney
+Version: 0.1
+Date: 2015-08-19
+Authors@R: c(person("J.", "Padarian", role = c("aut", "cre"),
+    email="jose.padarian@sydney.edu.au"))
+Author: J. Padarian
+Maintainer: J. Padarian <jose.padarian@sydney.edu.au>
+Description: R package with functions from the Soil Security Laboratory from the University of Sydney
+License: GPL-3
+Depends:
+    methods,
+    R (>= 3.1.1)
+Imports:
+    DEoptim

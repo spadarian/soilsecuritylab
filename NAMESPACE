@@ -1,0 +1,23 @@
+importFrom(methods,
+  setClass,
+  representation,
+  prototype,
+  new,
+  setMethod
+)
+importFrom(DEoptim,
+  DEoptim
+)
+exportPattern(".")
+exportMethods(
+    "length",
+    "[",
+    "plot",
+    "predict",
+    "summary",
+    "vcov" 
+)
+exportClasses(
+    "FuzzyCluster",
+    "FuzzyClusterGroup" 
+)
