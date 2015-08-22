@@ -20,6 +20,10 @@
 
 fuzzyRun <- function(data,phi,classes,disttype=3,exp_eg=NULL,obs=NULL,pred=NULL,.conf=0.95,alpha_values=NULL){
   
+  if(!(disttype %in% 1:3 )) stop('disttype should have a value of 1, 2, or 3.')
+  dist_name <- c('Euclidean','Diagonal','Mahalanobis')[disttype]
+  if(any(classes < 1 )) stop('Numbers of clusters should be greater than 1.')
+  
   lincon <- function (x,y) {
     n <- length(x)
     mx <- mean(x)
@@ -36,12 +40,16 @@ fuzzyRun <- function(data,phi,classes,disttype=3,exp_eg=NULL,obs=NULL,pred=NULL,
   if (is.null(alpha_values)) {
     require(DEoptim)
     message('Initialising alpha optimisation:')
-    assign('min_alpha',0,envir=soilsecuritylab.env)
+    assign('min_alpha',0.0000001,envir=soilsecuritylab.env)
     result <- lapply(classes,function(x){
       message(paste0('Optimising alpha for ',x,' clusters'))
       if (is.null(exp_eg)) exp_eg <- 1/(1+x)
       #### VTR=0.0005; NP=20; itermax=20  using optimised blas
-      tmp_ <- DEoptim(.fuzzy_extragrades,get('min_alpha',envir=soilsecuritylab.env),1,control=list(parallelType=1,VTR=0.0005,trace=F,itermax=20,NP=20,parVar='.mahaldist'),data=data,phi=phi,nclass=x,disttype=disttype,maxiter=300,toldif=0.001,exp_eg=exp_eg,.optim=T)
+      fkm__ <- function(...){
+        tmp <- .fuzzy_extragrades_C(...)
+        abs(tmp[[1]])
+      }
+      tmp_ <- DEoptim(fkm__,get('min_alpha',envir=soilsecuritylab.env),1,control=list(parallelType=1,VTR=0.0005,trace=F,itermax=20,NP=20,parVar=c('mahaldist','.fuzzy_extragrades_C'),packages=c('Rcpp','soilsecuritylab')),data=as.matrix(data),phi=phi,nclass=x,disttype=disttype,maxiter=300,toldif=0.001,exp_eg=exp_eg,optim=T)
       assign('min_alpha',tmp_$optim$bestmem,envir=soilsecuritylab.env)
       print(paste('*** Optim alpha:',tmp_$optim$bestmem))
       tmp_$nclass <- x
@@ -51,7 +59,8 @@ fuzzyRun <- function(data,phi,classes,disttype=3,exp_eg=NULL,obs=NULL,pred=NULL,
     message('Generating clusters:')
     result_ <- lapply(result,function(x){
       message(paste0(x$nclass,' clusters using alpha: ',x$optim$bestmem))
-      cluster <- .fuzzy_extragrades(x$optim$bestmem,data,phi,x$nclass,disttype,exp_eg=exp_eg)
+      cluster <- .fuzzy_extragrades_C(x$optim$bestmem,as.matrix(data),phi,x$nclass,disttype,300,0.001,exp_eg=exp_eg,optim=F)
+      cluster <- new('FuzzyCluster',data=data,U=cluster$U,W=cluster$W,centroids=cluster$centroids,phi=phi,classes=as.integer(x$nclass),distance=dist_name,alpha=unname(x$optim$bestmem),`Ue_mean - Ue_req`=abs(cluster$`Ue_mean - Ue_req`),iterations=cluster$iterations)
       if (!is.null(obs) & !is.null(pred)) {
         pred_int <- prediction_interval(cluster,obs,pred,.conf=.conf)
         cluster@pred_int <- pred_int
@@ -63,9 +72,10 @@ fuzzyRun <- function(data,phi,classes,disttype=3,exp_eg=NULL,obs=NULL,pred=NULL,
       result <- matrix(c(classes,alpha_values),ncol=2)
     }
     message('Generating clusters:')
-    result_ <- alply(result,1,function(x){
+    result_ <- lapply(result,1,function(x){
       message(paste0(x[1],' clusters using alpha: ',x[2]))
-      cluster <- .fuzzy_extragrades(x[2],data,phi,as.integer(x[1]),disttype,exp_eg=exp_eg)
+      cluster <- .fuzzy_extragrades_C(x[2],as.matrix(data),phi,as.integer(x[1]),disttype,300,0.001,exp_eg=exp_eg,optim=F)
+      cluster <- new('FuzzyCluster',data=data,U=cluster$U,W=cluster$W,centroids=cluster$centroids,phi=phi,classes=as.integer(x$nclass),distance=dist_name,alpha=unname(x$optim$bestmem),`Ue_mean - Ue_req`=abs(cluster$`Ue_mean - Ue_req`),iterations=cluster$iterations)
       if (!is.null(obs) & !is.null(pred)) {
         pred_int <- prediction_interval(cluster,obs,pred,.conf=.conf)
         cluster@pred_int <- pred_int

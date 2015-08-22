@@ -5,7 +5,7 @@
 \alias{FuzzyClusterGroup-methods}
 \title{Methods for FuzzyClusterGroup class}
 \usage{
-\S4method{plot}{FuzzyClusterGroup}(x, ...)
+\S4method{plot}{FuzzyClusterGroup}(x, y, ...)
 
 \S4method{length}{FuzzyClusterGroup}(x)
 }

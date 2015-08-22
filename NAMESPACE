@@ -1,3 +1,5 @@
+useDynLib(soilsecuritylab)
+importFrom(Rcpp, evalCpp)
 importFrom(methods,
   setClass,
   representation,
@@ -8,6 +10,7 @@ importFrom(methods,
 importFrom(DEoptim,
   DEoptim
 )
+import(RcppArmadillo)
 exportPattern(".")
 exportMethods(
     "length",
