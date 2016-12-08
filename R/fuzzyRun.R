@@ -59,8 +59,9 @@ fuzzyRun <- function(data,phi,classes,disttype=3,exp_eg=NULL,obs=NULL,pred=NULL,
     message('Generating clusters:')
     result_ <- lapply(result,function(x){
       message(paste0(x$nclass,' clusters using alpha: ',x$optim$bestmem))
+      if (is.null(exp_eg)) exp_eg <- 1/(1+x$nclass)
       cluster <- .fuzzy_extragrades_C(x$optim$bestmem,as.matrix(data),phi,x$nclass,disttype,300,0.001,exp_eg=exp_eg,optim=F)
-      cluster <- new('FuzzyCluster',data=data,U=cluster$U,W=cluster$W,centroids=cluster$centroids,phi=phi,classes=as.integer(x$nclass),distance=dist_name,alpha=unname(x$optim$bestmem),`Ue_mean - Ue_req`=abs(cluster$`Ue_mean - Ue_req`),iterations=cluster$iterations)
+      cluster <- new('FuzzyCluster',data=as.matrix(data),U=cluster$U,W=cluster$W,centroids=cluster$centroids,phi=phi,classes=as.integer(x$nclass),distance=dist_name,alpha=unname(x$optim$bestmem),`Ue_mean - Ue_req`=abs(cluster$`Ue_mean - Ue_req`),iterations=cluster$iterations)
       if (!is.null(obs) & !is.null(pred)) {
         pred_int <- prediction_interval(cluster,obs,pred,.conf=.conf)
         cluster@pred_int <- pred_int
