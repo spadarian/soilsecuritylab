@@ -144,7 +144,7 @@ setMethod('predict','FuzzyCluster',function(object,newdata){
   
   obs_var <- colnames(object@data)
   if (class(try(newdata[,obs_var],T)) == 'try-error') {
-    stop(paste0('New data does not include all the clustered variables. Check column names or include all necessary variables.\n  Required variables: ',paste0(aaa,collapse=', ')))
+    stop(paste0('New data does not include all the clustered variables. Check column names or include all necessary variables.\n  Required variables: ',paste0(obs_var,collapse=', ')))
   }
   
   newdata <- data.frame(newdata[,obs_var])

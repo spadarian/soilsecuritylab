@@ -49,7 +49,10 @@ fuzzyRun <- function(data,phi,classes,disttype=3,exp_eg=NULL,obs=NULL,pred=NULL,
         tmp <- .fuzzy_extragrades_C(...)
         abs(tmp[[1]])
       }
-      tmp_ <- DEoptim(fkm__,get('min_alpha',envir=soilsecuritylab.env),1,control=list(parallelType=1,VTR=0.0005,trace=F,itermax=20,NP=20,parVar=c('mahaldist','.fuzzy_extragrades_C'),packages=c('Rcpp','soilsecuritylab')),data=as.matrix(data),phi=phi,nclass=x,disttype=disttype,maxiter=300,toldif=0.001,exp_eg=exp_eg,optim=T)
+      tmp_ <- try(DEoptim(fkm__,get('min_alpha',envir=soilsecuritylab.env),1,control=list(parallelType=1,VTR=0.0005,trace=F,itermax=20,NP=20,parVar=c('mahaldist','.fuzzy_extragrades_C'),packages=c('Rcpp','soilsecuritylab')),data=as.matrix(data),phi=phi,nclass=x,disttype=disttype,maxiter=300,toldif=0.001,exp_eg=exp_eg,optim=T))
+      if (class(tmp_) == 'try-error'){
+        tmp_ <- DEoptim(fkm__,get('min_alpha',envir=soilsecuritylab.env),1,control=list(parallelType=0,VTR=0.0005,trace=F,itermax=20,NP=20,parVar=c('mahaldist','.fuzzy_extragrades_C'),packages=c('Rcpp','soilsecuritylab')),data=as.matrix(data),phi=phi,nclass=x,disttype=disttype,maxiter=300,toldif=0.001,exp_eg=exp_eg,optim=T)
+      }
       assign('min_alpha',tmp_$optim$bestmem,envir=soilsecuritylab.env)
       print(paste('*** Optim alpha:',tmp_$optim$bestmem))
       tmp_$nclass <- x
