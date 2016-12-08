@@ -13,7 +13,7 @@
 #' ### Functions to be used on part of the FuzzyClusterGroup
 #' plot(fkm@@clusters$`2`,.plot=1)
 #' 
-#' summary(fkm@@clusters$`2`,latex=T)
+#' summary(fkm@@clusters$`2`,latex=TRUE)
 #' @name FuzzyCluster-methods
 
 setMethod('plot','FuzzyCluster',function(x,.plot=NULL,...){
