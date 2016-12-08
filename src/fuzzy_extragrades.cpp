@@ -3,6 +3,12 @@
 using namespace Rcpp;
 using namespace arma;
 
+//'Calculate distances
+//'
+//'@param x matrix
+//'@param y matrix
+//'@param w matrix
+//'@return distance matrix
 // [[Rcpp::export]]
 arma::mat mahaldist(arma::mat x,arma::mat y, arma::mat w) {
 
@@ -15,6 +21,18 @@ arma::mat mahaldist(arma::mat x,arma::mat y, arma::mat w) {
     return ans;
 }
 
+//'Run fuzzy clustering algorithm
+//'
+//'@param alpha temp.
+//'@param data a \code{data.frame} with numerical data. Each column corresponds to a dimension of a \code{n}-dimensional clustering domain.
+//'@param phi a numerical value representing the degree of fuzziness or overlap of the generated clusters.
+//'@param nclass numerical (integer) vector with the number of cluster to generate.
+//'@param disttype numerical value representing the type of distance to calculate for the clustering. Possible values are: 1 (Euclidean), 2 (Diagonal), and 3 (default, Mahalanobis).
+//'@param maxiter maximum number of iterations.
+//'@param toldif temp.
+//'@param exp_eg the expected fraction of extragrades. If not provided, it is assumed to be dependant on the number of clusters (\code{1/(1+nclusters)}).
+//'@param optim temp.
+//'@return \code{FuzzyClusterGroup}
 // [[Rcpp::export(name=".fuzzy_extragrades_C")]]
 List fuzzy_extragrades_C(double alpha, NumericMatrix data, double phi, int nclass, int disttype, int maxiter, double toldif, double exp_eg, bool optim) {
     // Rcout << "The value is " << ans << std::endl;
@@ -165,12 +183,12 @@ List fuzzy_extragrades_C(double alpha, NumericMatrix data, double phi, int nclas
 
     List resp;
     if (optim){
-        resp["Ue_mean - Ue_req"] = Ue_mean-exp_eg;
+        resp["Ue_mean-Ue_req"] = Ue_mean-exp_eg;
     } else {
         resp["U"] = U;
         resp["W"] = W;
         resp["centroids"] = centroids;
-        resp["Ue_mean - Ue_req"] = Ue_mean-exp_eg;
+        resp["Ue_mean-Ue_req"] = Ue_mean-exp_eg;
         resp["iterations"] = iters;
     }
 

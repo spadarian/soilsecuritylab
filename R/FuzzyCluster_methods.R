@@ -1,21 +1,24 @@
+#' @include Classes.R
+NULL
+
 #' Methods for FuzzyCluster class
-#' 
+#'
 #' Common methods implemented for the FuzzyCluster class.
-#' 
+#'
 #' @param x,object FuzzyCluster object
 #' @param .plot numeric (optional). If just one plot is required it can be specified here.
-#' @param ... arguments to be passed to subsequent methods, e.g., plot.FuzzyCluster for the plot method 
+#' @param ... arguments to be passed to subsequent methods, e.g., plot.FuzzyCluster for the plot method
 #' @method plot FuzzyCluster
+#' @aliases plot,FuzzyCluster-method
 #' @examples
 #' ### Create FuzzyClusterGroup
 #' fkm <- fuzzyRun(cars,1.5,2:4,3)
-#' 
+#'
 #' ### Functions to be used on part of the FuzzyClusterGroup
 #' plot(fkm@@clusters$`2`,.plot=1)
-#' 
+#'
 #' summary(fkm@@clusters$`2`,latex=TRUE)
 #' @name FuzzyCluster-methods
-
 setMethod('plot','FuzzyCluster',function(x,.plot=NULL,...){
   if (1 %in% .plot | is.null(.plot)) {
     simb <- attributes(x@U)$hard_clust
@@ -34,7 +37,7 @@ setMethod('plot','FuzzyCluster',function(x,.plot=NULL,...){
     } else {
       layout(matrix(1:2,ncol=2), width = c(20,1),height = c(1,1))
       plot(as.data.frame(x@data),col=rgb(colorRamp(c('grey','black'))(x@U[,'Eg']),maxColorValue=255),pch=16,main='Extragrade class\nmembership')
-      
+
       legend_image <- as.raster(matrix(rgb(colorRamp(c('grey','black'))(seq(1,0,length.out = 10)),maxColorValue=255), ncol=1))
       mar_orig <- par()$mar
       par(mar=c(2,0,2,1.5))
@@ -54,7 +57,7 @@ setMethod('plot','FuzzyCluster',function(x,.plot=NULL,...){
     } else {
       layout(matrix(1:2,ncol=2), width = c(20,1),height = c(1,1))
       plot(as.data.frame(x@data),col=rgb(colorRamp(c('grey','black'))(attributes(x@U)$CI),maxColorValue=255),pch=16,main='Confusion Index')
-      
+
       legend_image <- as.raster(matrix(rgb(colorRamp(c('grey','black'))(seq(1,0,length.out = 10)),maxColorValue=255), ncol=1))
       mar_orig <- par()$mar
       par(mar=c(2,0,2,1.5))
@@ -88,10 +91,11 @@ setMethod('plot','FuzzyCluster',function(x,.plot=NULL,...){
 
 #' @param extragrade_label string to use as label for the extragrade class. Default set to \code{'Eg' }.
 #' @param decimals number of decimals to display.
-#' @param latex if \code{FALSE} (default) the summary is displayed as a regular R output. If \code{TRUE}, the output is formated as a latex table (using booktabs). 
+#' @param latex if \code{FALSE} (default) the summary is displayed as a regular R output. If \code{TRUE}, the output is formated as a latex table (using booktabs).
 #' @param caption if \code{latex} is set to \code{TRUE}, is the sting used as a caption for the table.
 #' @param label if \code{latex} is set to \code{TRUE}, is the sting used as a label for the table.
 #' @method summary FuzzyCluster
+#' @aliases summary,FuzzyCluster-method
 #' @name FuzzyCluster-methods
 
 setMethod('summary','FuzzyCluster',function(object,extragrade_label='Eg',decimals=2,latex=F,caption=NULL,label=NULL){
@@ -112,7 +116,7 @@ setMethod('summary','FuzzyCluster',function(object,extragrade_label='Eg',decimal
                   paste0('\\cmidrule(rl){2-',table.dim[2]-2,'}\\cmidrule(rl){',table.dim[2]-1,'-',table.dim[2]+1,'}'),
                   table_capt[(index+2):length(table_capt)])
       table_ <- gsub(paste0(c('-0.',rep('0',decimals)),collapse=''),'0.00',table_,perl=T)
-      
+
       table_1 <- table_[5:(5+table.dim[1]+7)]
       table_1 <- c('\\subfloat[ Class centroids and prediction intervals (PI)]{',paste0('\\label{',label,'1}'),table_1,'}\\\\')
       table_2 <- capture.output(cat(print(xtable::xtable(table_W,align=c('l',rep('c',dim(table_W)[2]))),booktabs=TRUE,sanitize.rownames.function=function(x){x},
@@ -128,6 +132,7 @@ setMethod('summary','FuzzyCluster',function(object,extragrade_label='Eg',decimal
 })
 
 #' @method vcov FuzzyCluster
+#' @aliases vcov,FuzzyCluster-method
 #' @name FuzzyCluster-methods
 
 setMethod('vcov','FuzzyCluster',function(object){
@@ -138,19 +143,20 @@ setMethod('vcov','FuzzyCluster',function(object){
 
 #' @param newdata a \code{data.frame} object in which to look for variables with which to predict.
 #' @method predict FuzzyCluster
+#' @aliases predict,FuzzyCluster-method
 #' @name FuzzyCluster-methods
 
 setMethod('predict','FuzzyCluster',function(object,newdata){
-  
+
   obs_var <- colnames(object@data)
   if (class(try(newdata[,obs_var],T)) == 'try-error') {
     stop(paste0('New data does not include all the clustered variables. Check column names or include all necessary variables.\n  Required variables: ',paste0(obs_var,collapse=', ')))
   }
-  
+
   newdata <- data.frame(newdata[,obs_var])
-  
+
   newdata <- na.exclude(newdata)
-  
+
   if (object@distance == 'Euclidean') {
     dist.m <- apply(object@centroids,1,function(x){
       sqrt(rowSums((as.matrix(newdata) - matrix(rep(x,dim(newdata)[1]),dim(newdata)[1],byrow=T))^2))
@@ -173,13 +179,13 @@ setMethod('predict','FuzzyCluster',function(object,newdata){
     class[which(tmp[,i])] <- colnames(U_final)[i]
   }
   message(paste0('Number of extragrades detected: ',length(which(class == 'Eg'))))
-  
+
   PICl <- c(U_final%*%object@pred_int$PICl)
   PICu <- c(U_final%*%object@pred_int$PICu)
-  
+
   predicted <- data.frame(PICl=PICl,PICu=PICu)
   attributes(predicted)$hard_clust <- class
   attributes(predicted)$U <- U_final
-  
+
   predicted
 })

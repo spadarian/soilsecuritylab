@@ -1,11 +1,13 @@
 #' Methods for FuzzyClusterGroup class
-#' 
+#'
 #' Common methods implemented for the FuzzyClusterGroup class.
-#' 
+#'
 #' @param x FuzzyClusterGroup object
-#' @param ... arguments to be passed to subsequent methods, e.g., plot.FuzzyCluster for the plot method 
+#' @param y ???
+#' @param ... arguments to be passed to subsequent methods, e.g., plot.FuzzyCluster for the plot method
 #' @method plot FuzzyClusterGroup
 #' @name FuzzyClusterGroup-methods
+#' @aliases plot,FuzzyClusterGroup-method
 
 setMethod('plot','FuzzyClusterGroup', function(x,...){
   plot_ <- lapply(x@clusters,function(z){
@@ -35,9 +37,14 @@ setMethod('plot','FuzzyClusterGroup', function(x,...){
 
 #' @method length FuzzyClusterGroup
 #' @name FuzzyClusterGroup-methods
+#' @aliases length,FuzzyClusterGroup-method
 setMethod('length','FuzzyClusterGroup',function(x) length(x@clusters))
 
-
+#' Extract by index
+#' @param i index
+#' @method [ FuzzyClusterGroup
+#' @name FuzzyClusterGroup-methods
+#' @aliases [,FuzzyClusterGroup-method
 setMethod('[','FuzzyClusterGroup',function(x,i) {
   x@clusters <- x@clusters[i]
   x

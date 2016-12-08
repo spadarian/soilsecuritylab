@@ -3,6 +3,10 @@
 \docType{methods}
 \name{FuzzyCluster-methods}
 \alias{FuzzyCluster-methods}
+\alias{plot,FuzzyCluster-method}
+\alias{predict,FuzzyCluster-method}
+\alias{summary,FuzzyCluster-method}
+\alias{vcov,FuzzyCluster-method}
 \title{Methods for FuzzyCluster class}
 \usage{
 \S4method{plot}{FuzzyCluster}(x, .plot = NULL, ...)

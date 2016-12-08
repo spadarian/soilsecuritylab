@@ -3,18 +3,29 @@
 \docType{methods}
 \name{FuzzyClusterGroup-methods}
 \alias{FuzzyClusterGroup-methods}
+\alias{[,FuzzyClusterGroup-method}
+\alias{length,FuzzyClusterGroup-method}
+\alias{plot,FuzzyClusterGroup-method}
 \title{Methods for FuzzyClusterGroup class}
 \usage{
 \S4method{plot}{FuzzyClusterGroup}(x, y, ...)
 
 \S4method{length}{FuzzyClusterGroup}(x)
+
+\S4method{[}{FuzzyClusterGroup}(x, i)
 }
 \arguments{
 \item{x}{FuzzyClusterGroup object}
 
+\item{y}{???}
+
 \item{...}{arguments to be passed to subsequent methods, e.g., plot.FuzzyCluster for the plot method}
+
+\item{i}{index}
 }
 \description{
 Common methods implemented for the FuzzyClusterGroup class.
+
+Extract by index
 }
 

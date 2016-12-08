@@ -36,6 +36,6 @@ This function generates an FuzzyClusterGroup for a sequence of cluster numbers.
 fkm <- fuzzyRun(cars,1.5,2:6,3)
 }
 \references{
-De Gruijter, J. and McBratney, A. 1988. A modified fuzzy k-means method for predictive classification. In: 1st Conference of the International Federation of Classification Societies. Ed. by H. Bock. Elsevier Science, Amsterdam: pp. 97–104.
+De Gruijter, J. and McBratney, A. 1988. A modified fuzzy k-means method for predictive classification. In: 1st Conference of the International Federation of Classification Societies. Ed. by H. Bock. Elsevier Science, Amsterdam: pp. 97-104.
 }
 
